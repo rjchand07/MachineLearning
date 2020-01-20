@@ -24,28 +24,28 @@ cdf.head(9)
 viz = cdf[['CYLINDERS','ENGINESIZE','CO2EMISSIONS','FUELCONSUMPTION_COMB']]
 
 viz.hist()
-plt.show()
+#plt.show()
 
 # Now, lets plot Enginesize vs the Emission, to see how linear is their relation
 
 plt.scatter(cdf.ENGINESIZE, cdf.CO2EMISSIONS,  color='blue')
 plt.xlabel("Engine size")
 plt.ylabel("Emission")
-plt.show()
+#plt.show()
 
 # Now, lets plot Fuel Consumption vs the Emission, to see how linear is their relation
 
 plt.scatter(cdf.FUELCONSUMPTION_COMB, cdf.CO2EMISSIONS,  color='blue')
 plt.xlabel("FUELCONSUMPTION_COMB")
 plt.ylabel("Emission")
-plt.show()
+#plt.show()
 
 # Now, lets plot Cylinders vs the Emission, to see how linear is their relation
 
 plt.scatter(cdf.CYLINDERS, cdf.CO2EMISSIONS,  color='blue')
 plt.xlabel("cylinders")
 plt.ylabel("Emission")
-plt.show()
+#plt.show()
 
 # Lets split our dataset into train and test sets, 80% of the entire data for training, and the 20% for testing-
 # We create a mask to select random rows using np.random.rand() function
@@ -76,7 +76,7 @@ plt.scatter(train.ENGINESIZE, train.CO2EMISSIONS, color = 'blue')
 plt.plot(train_x, regr.coef_[0][0]*train_x+regr.intercept_[0], '-r')
 plt.xlabel('Enginesize')
 plt.ylabel('Emissions')
-plt.show()
+#plt.show()
 
 # Evaluation
 
