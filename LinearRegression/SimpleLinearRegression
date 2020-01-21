@@ -8,84 +8,60 @@ import numpy as np
 
 #url  https://s3-api.us-geo.objectstorage.softlayer.net/cf-courses-data/CognitiveClass/ML0101ENv3/labs/FuelConsumptionCo2.csv
 
+#### Load Data ####
 df = pd.read_csv("FuelConsumption.csv")
-
-# take a look at the dataset
-df.head()
-
-# summarize the data
-df.describe()
-
-# Lets select some features to explore more.
-
 cdf = df[['ENGINESIZE','CYLINDERS','FUELCONSUMPTION_COMB','CO2EMISSIONS']]
-cdf.head(9)
 
-viz = cdf[['CYLINDERS','ENGINESIZE','CO2EMISSIONS','FUELCONSUMPTION_COMB']]
+# Taking Engine Size as independent Value i.e., X and Dependent value as Co2 Emission i.e., y
 
-viz.hist()
-#plt.show()
+X = cdf[['ENGINESIZE']]
+y = cdf[['CO2EMISSIONS']]
 
-# Now, lets plot Enginesize vs the Emission, to see how linear is their relation
+#### split dataset into train and test ####
+'''
+Next we have to split the dataset into training and testing. We will use the training dataset for training the model and then check the performance of the model on the test dataset.
+For this we will use the train_test_split method from library model_selection
+We are providing a test_size of 1/3 which means test set will contain 10 observations and training set will contain 20 observations
+Taking seed value = 0  and assigning it into random_state
+'''
 
-plt.scatter(cdf.ENGINESIZE, cdf.CO2EMISSIONS,  color='blue')
-plt.xlabel("Engine size")
-plt.ylabel("Emission")
-#plt.show()
+from sklearn.model_selection import train_test_split
+seed = 0
+test_size = 1/3
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = test_size, random_state = seed)
 
-# Now, lets plot Fuel Consumption vs the Emission, to see how linear is their relation
 
-plt.scatter(cdf.FUELCONSUMPTION_COMB, cdf.CO2EMISSIONS,  color='blue')
-plt.xlabel("FUELCONSUMPTION_COMB")
-plt.ylabel("Emission")
-#plt.show()
+#### Fit Simple Linear Regression model to training set ####
 
-# Now, lets plot Cylinders vs the Emission, to see how linear is their relation
+'''
+We will be using the LinearRegression class from the library sklearn.linear_model. First we create an object of the LinearRegression class and call the fit method passing the X_train and y_train
+'''
+from sklearn.linear_model import LinearRegression
+regressor = LinearRegression()
+regressor.fit(X_train, y_train)
 
-plt.scatter(cdf.CYLINDERS, cdf.CO2EMISSIONS,  color='blue')
-plt.xlabel("cylinders")
-plt.ylabel("Emission")
-#plt.show()
 
-# Lets split our dataset into train and test sets, 80% of the entire data for training, and the 20% for testing-
-# We create a mask to select random rows using np.random.rand() function
+#### Predict the test set ####
 
-msk = np.random.rand(len(df)) < 0.8
-train = cdf[msk]
-test = cdf[~msk]
+y_pred = regressor.predict(X_test)
 
-# Train data distribution
-plt.scatter(train.ENGINESIZE, train.CO2EMISSIONS, color = 'blue')
+#### Visualizing the training set ####
+
+plt.scatter(X_train, y_train, color = 'red')
+plt.plot(X_train, regressor.predict(X_train), color = 'blue')
 plt.xlabel('Engine Size')
-plt.ylabel('Emissions')
+plt.ylabel('Emission')
 plt.show()
 
-# Modeling
-# Using sklearn package to model data.
+#### Visualizing the test set ####
 
-from sklearn import linear_model
-regr = linear_model.LinearRegression()
-train_x = np.asanyarray(train[['ENGINESIZE']])
-train_y = np.asanyarray(train[['CO2EMISSIONS']])
-regr.fit(train_x, train_y)
-print ('Coefficients: ', regr.coef_)
-print ('Intercept: ', regr.intercept_)
+plt.scatter(X_test, y_test, color= 'red')
+plt.plot(X_train, regressor.predict(X_train), color = 'blue')
+plt.xlabel('Engine Size')
+plt.ylabel('Emission')
+plt.show()
 
-# Plot outputs
-plt.scatter(train.ENGINESIZE, train.CO2EMISSIONS, color = 'blue')
-plt.plot(train_x, regr.coef_[0][0]*train_x+regr.intercept_[0], '-r')
-plt.xlabel('Enginesize')
-plt.ylabel('Emissions')
-#plt.show()
+####  Make new predictions ####
 
-# Evaluation
-
-from sklearn.metrics import r2_score
-
-test_x = np.asanyarray(test[['ENGINESIZE']])
-test_y = np.asanyarray(test[['CO2EMISSIONS']])
-test_y_hat = regr.predict(test_x)
-
-print("Mean absolute error: %.2f" % np.mean(np.absolute(test_y_hat - test_y)))
-print("Residual sum of squares (MSE): %.2f" % np.mean((test_y_hat - test_y) ** 2))
-print("R2-score: %.2f" % r2_score(test_y_hat , test_y) )
+new_pred = regressor.predict([[3.6]])
+print(new_pred)
